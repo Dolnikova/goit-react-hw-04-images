@@ -7,6 +7,7 @@ import { Searchbar } from './ImageSearch/Searchbar';
 import Button from './Button/Button';
 import Modal from './Modal/Modal';
 import { fetchImages } from './api';
+import { Loader } from './Loader/Loader';
 
 export const App = () => {
   const [images, setImages] = useState([]);
@@ -46,8 +47,8 @@ export const App = () => {
   };
 
   useEffect(() => {
-    setIsLoading(true);
     if (!search) return;
+    setIsLoading(true);
     fetchImages(search, page)
       .then(images => {
         if (images.totalHits === 0) {
@@ -81,7 +82,11 @@ export const App = () => {
           {totalHits - page * 12 > 0 && <Button onClick={nextPage}></Button>}
         </>
       )}
-
+      {isLoading ? (
+        <Loader error={error} />
+      ) : (
+        images.length > 0 && <Button onClick={fetchImages} />
+      )}
       <ToastContainer />
     </>
   );
