@@ -1,5 +1,4 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import {
   SearchForm,
@@ -9,45 +8,38 @@ import {
   SearchFormButtonLabel,
 } from './Searchbar.styled';
 
-export default class Searchbar extends Component {
-  static propTypes = { onSubmit: PropTypes.func.isRequired };
-  state = {
-    search: '',
-  };
+export const Searchbar = ({ onSubmit }) => {
+  const [search, setSearch] = useState('');
 
-  handleChange = e => {
-    this.setState({ search: e.currentTarget.value.toLowerCase() });
+  const handleChange = e => {
+    setSearch(e.currentTarget.value.toLowerCase());
   };
-  handleSubmit = e => {
+  const handleSubmit = e => {
     e.preventDefault();
-    if (!this.state.search.trim()) {
+    if (!search.trim()) {
       toast.error('Type something to find');
       return;
     }
-    this.props.onSubmit(this.state.search);
+    onSubmit(search);
   };
-  render() {
-    const { search } = this.state;
-    return (
-      <header>
-        <SearchBar>
-          <SearchForm onSubmit={this.handleSubmit}>
-            <SearchFormButton type="submit">
-              <SearchFormButtonLabel>Search</SearchFormButtonLabel>
-            </SearchFormButton>
+  return (
+    <header>
+      <SearchBar>
+        <SearchForm onSubmit={handleSubmit}>
+          <SearchFormButton type="submit">
+            <SearchFormButtonLabel>Search</SearchFormButtonLabel>
+          </SearchFormButton>
 
-            <SearchFormInput
-              type="text"
-              autoComplete="off"
-              onChange={this.handleChange}
-              value={search}
-              autoFocus
-              placeholder="Search images and photos"
-            />
-          </SearchForm>
-        </SearchBar>
-      </header>
-    );
-  }
-}
-// SearchBar.PropTypes = { onSubmit: PropTypes.func.isRequired };
+          <SearchFormInput
+            type="text"
+            autoComplete="off"
+            onChange={handleChange}
+            value={search}
+            autoFocus
+            placeholder="Search images and photos"
+          />
+        </SearchForm>
+      </SearchBar>
+    </header>
+  );
+};
