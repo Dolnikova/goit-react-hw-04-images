@@ -46,6 +46,16 @@ export const App = () => {
     setPage(page + 1);
   };
 
+  const createArrayOfImages = data => {
+    const arrayOfImages = data.map(element => ({
+      id: element.id,
+      tags: element.tags,
+      webformatURL: element.webformatURL,
+      largeImageURL: element.largeImageURL,
+    }));
+    return arrayOfImages;
+  };
+
   useEffect(() => {
     if (!search) return;
     setIsLoading(true);
@@ -57,7 +67,7 @@ export const App = () => {
             toast.error(`There is no image with name ${search}`)
           );
         }
-        setImages(images.hits);
+        setImages(createArrayOfImages(images.hits));
         setTotalHits(images.totalHits);
       })
       .catch(error => setError(error))
@@ -71,6 +81,7 @@ export const App = () => {
       <Searchbar onSubmit={handleSubmit} />
       {!!images.length && (
         <>
+          {isLoading && <Loader error={error} />}
           {showModal && (
             <Modal
               onClose={toggleModal}
@@ -79,14 +90,12 @@ export const App = () => {
             />
           )}
           <ImageGallery hits={images} openModal={openModal} />
-          {totalHits - page * 12 > 0 && <Button onClick={nextPage}></Button>}
+          {totalHits - page * 12 > 0 && images.length > 0 && (
+            <Button onClick={nextPage}></Button>
+          )}
         </>
       )}
-      {isLoading ? (
-        <Loader error={error} />
-      ) : (
-        images.length > 0 && <Button onClick={fetchImages} />
-      )}
+
       <ToastContainer />
     </>
   );
